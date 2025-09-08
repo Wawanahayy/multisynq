@@ -2,8 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 /**
- * Upsert beberapa ENV ke file (.env.local default).
- * - Di Vercel: read-only → tidak menulis file, hanya mengubah process.env saat runtime & return info.
+ * Upsert ENV ke file (default .env.local).
+ * - Di Vercel (read-only): tidak menulis file; hanya set process.env dan return info.
  * - Di lokal: menulis file target.
  */
 export async function upsertEnv(pairs: Record<string, string>, filePath = '.env.local') {
@@ -25,7 +25,7 @@ export async function upsertEnv(pairs: Record<string, string>, filePath = '.env.
       const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
       if (m) map.set(m[1], m[2]);
     }
-    // upsert nilai baru (quoted)
+    // upsert nilai baru (quote jika perlu)
     for (const [k, v] of Object.entries(pairs)) {
       const serialized = /[\s"#]/.test(v) ? JSON.stringify(v) : v;
       map.set(k, serialized);
@@ -38,3 +38,6 @@ export async function upsertEnv(pairs: Record<string, string>, filePath = '.env.
     return { ok: false, reason: String(e?.message || e), file: filePath };
   }
 }
+
+/** Alias agar import lama `upsertEnvVars` tetap jalan */
+export const upsertEnvVars = upsertEnv;
