@@ -1,0 +1,14 @@
+
+.env
+.env.*
+!.env.example
+.paymint_secret
+.paymint_tx
+
+
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+out/
+.vercel/
